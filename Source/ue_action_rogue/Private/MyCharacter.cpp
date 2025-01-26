@@ -46,6 +46,7 @@ void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	PlayerInputComponent->BindAxis("MoveRight", this, &AMyCharacter::MoveRight);
 	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
+	PlayerInputComponent->BindAction("PrimaryAttack", IE_Pressed, this, &AMyCharacter::PrimaryAttack);
 }
 
 void AMyCharacter::MoveForward(const float Value)
@@ -67,4 +68,20 @@ void AMyCharacter::MoveRight(const float Value)
 	// X = Forward (Red), Y = Right (Green), Z = Up (Blue)
 	const FVector RightVector = FRotationMatrix(ControlRot).GetScaledAxis(EAxis::Y);
 	AddMovementInput(RightVector, Value);
+}
+
+void AMyCharacter::PrimaryAttack()
+{
+	if (ProjectileClass)
+	{
+		FTransform SpawnTransform = FTransform(GetActorRotation(), GetActorLocation());
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+        
+		GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTransform, SpawnParams);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ProjectileClass is not set in %s"), *GetNameSafe(this));
+	}
 }
