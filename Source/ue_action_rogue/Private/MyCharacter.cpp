@@ -4,6 +4,8 @@
 #include "MyCharacter.h"
 #include "ue_action_rogue/Public/MyCharacter.h"
 
+#include "GameFramework/CharacterMovementComponent.h"
+
 // Sets default values
 AMyCharacter::AMyCharacter()
 {
@@ -11,10 +13,14 @@ AMyCharacter::AMyCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>("Spring Arm Component");
+	SpringArmComp->bUsePawnControlRotation = true;
 	SpringArmComp->SetupAttachment(RootComponent);
 	
 	CameraComp = CreateDefaultSubobject<UCameraComponent>("Camera Component");
 	CameraComp->SetupAttachment(SpringArmComp);
+	// RPG like camera, character won't rotation only camera does if set to false
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+	bUseControllerRotationYaw = false;
 }
 
 // Called when the game starts or when spawned
@@ -37,10 +43,28 @@ void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &AMyCharacter::MoveForward);
+	PlayerInputComponent->BindAxis("MoveRight", this, &AMyCharacter::MoveRight);
 	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
+	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 }
 
 void AMyCharacter::MoveForward(const float Value)
 {
-	AddMovementInput(GetActorForwardVector(), Value);
+	// move with camera rotation
+	FRotator ControlRot = GetControlRotation();
+	ControlRot.Pitch = .0f;
+	ControlRot.Roll = .0f;
+	AddMovementInput(ControlRot.Vector(), Value);
+	// move without rotation
+	//AddMovementInput(GetActorForwardVector(), Value);
+}
+
+void AMyCharacter::MoveRight(const float Value)
+{
+	FRotator ControlRot = GetControlRotation();
+	ControlRot.Pitch = .0f;
+	ControlRot.Roll = .0f;
+	// X = Forward (Red), Y = Right (Green), Z = Up (Blue)
+	const FVector RightVector = FRotationMatrix(ControlRot).GetScaledAxis(EAxis::Y);
+	AddMovementInput(RightVector, Value);
 }
