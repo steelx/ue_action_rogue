@@ -34,7 +34,6 @@ void AMyCharacter::BeginPlay()
 void AMyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 // Called to bind functionality to input
@@ -51,23 +50,35 @@ void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 void AMyCharacter::MoveForward(const float Value)
 {
-	// move with camera rotation
-	FRotator ControlRot = GetControlRotation();
-	ControlRot.Pitch = .0f;
-	ControlRot.Roll = .0f;
-	AddMovementInput(ControlRot.Vector(), Value);
-	// move without rotation
-	//AddMovementInput(GetActorForwardVector(), Value);
+	if (Value != 0.0f)
+	{
+		// move with camera rotation
+		FRotator ControlRot = GetControlRotation();
+		ControlRot.Pitch = 0.0f;
+		ControlRot.Roll = 0.0f;
+		AddMovementInput(ControlRot.Vector(), Value);
+
+		// Update the character's rotation to face the movement direction
+		const FRotator NewRotation(0.0f, ControlRot.Yaw, 0.0f);
+		SetActorRotation(NewRotation);
+	}
 }
 
 void AMyCharacter::MoveRight(const float Value)
 {
-	FRotator ControlRot = GetControlRotation();
-	ControlRot.Pitch = .0f;
-	ControlRot.Roll = .0f;
-	// X = Forward (Red), Y = Right (Green), Z = Up (Blue)
-	const FVector RightVector = FRotationMatrix(ControlRot).GetScaledAxis(EAxis::Y);
-	AddMovementInput(RightVector, Value);
+	if (Value != 0.0f)
+	{
+		FRotator ControlRot = GetControlRotation();
+		ControlRot.Pitch = 0.0f;
+		ControlRot.Roll = 0.0f;
+		// X = Forward (Red), Y = Right (Green), Z = Up (Blue)
+		const FVector RightVector = FRotationMatrix(ControlRot).GetScaledAxis(EAxis::Y);
+		AddMovementInput(RightVector, Value);
+
+		// Update the character's rotation to face the movement direction
+		const FRotator NewRotation(0.0f, ControlRot.Yaw, 0.0f);
+		SetActorRotation(NewRotation);
+	}
 }
 
 void AMyCharacter::PrimaryAttack()
