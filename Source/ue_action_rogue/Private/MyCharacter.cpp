@@ -2,8 +2,10 @@
 
 
 #include "MyCharacter.h"
-#include "ue_action_rogue/Public/MyCharacter.h"
 
+#include "MyInteractionComponent.h"
+#include "Camera/CameraComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
@@ -21,6 +23,8 @@ AMyCharacter::AMyCharacter()
 	// RPG like camera, character won't rotation only camera does if set to false
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	bUseControllerRotationYaw = false;
+
+	InteractionComp = CreateDefaultSubobject<UMyInteractionComponent>("Interaction Component");
 }
 
 // Called when the game starts or when spawned
@@ -46,6 +50,7 @@ void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAction("PrimaryAttack", IE_Pressed, this, &AMyCharacter::PrimaryAttack);
+	PlayerInputComponent->BindAction("PrimaryInteract", IE_Pressed, this, &AMyCharacter::PrimaryInteract);
 }
 
 void AMyCharacter::MoveForward(const float Value)
@@ -85,7 +90,7 @@ void AMyCharacter::PrimaryAttack()
 {
 	if (ProjectileClass)
 	{
-		FTransform SpawnTransform = FTransform(GetActorRotation(), GetActorLocation());
+		const FTransform SpawnTransform(GetActorRotation(), GetActorLocation());
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
         
@@ -94,5 +99,13 @@ void AMyCharacter::PrimaryAttack()
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("ProjectileClass is not set in %s"), *GetNameSafe(this));
+	}
+}
+
+void AMyCharacter::PrimaryInteract()
+{
+	if (InteractionComp)
+	{
+		InteractionComp->PrimaryInteract();
 	}
 }

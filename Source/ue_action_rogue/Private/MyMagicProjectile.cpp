@@ -2,6 +2,9 @@
 
 
 #include "MyMagicProjectile.h"
+#include "Components/SphereComponent.h"
+#include "GameFramework/ProjectileMovementComponent.h"
+#include "Particles/ParticleSystemComponent.h"
 
 // Sets default values
 AMyMagicProjectile::AMyMagicProjectile()
