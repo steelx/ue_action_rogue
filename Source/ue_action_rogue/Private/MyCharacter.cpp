@@ -87,15 +87,33 @@ void AMyCharacter::MoveRight(const float Value)
 	}
 }
 
+void AMyCharacter::PrimaryAttack_Time_Elapsed()
+{
+	if (AttackAnim)
+	{
+		PlayAnimMontage(AttackAnim);
+		UE_LOG(LogTemp, Log, TEXT("Playing Attack Animation"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AttackAnim is not set in %s"), *GetNameSafe(this));
+	}
+		
+	const FVector SpawnLocation = GetMesh()->GetSocketLocation("Muzzle_01");
+	const FTransform SpawnTransform(GetControlRotation(), SpawnLocation);
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+        
+	GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTransform, SpawnParams);
+}
+
 void AMyCharacter::PrimaryAttack()
 {
 	if (ProjectileClass)
 	{
-		const FTransform SpawnTransform(GetActorRotation(), GetActorLocation());
-		FActorSpawnParameters SpawnParams;
-		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-        
-		GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTransform, SpawnParams);
+		// runs animation after a delay
+		GetWorldTimerManager()
+			.SetTimer(PrimaryAttack_TimerHandle, this, &AMyCharacter::PrimaryAttack_Time_Elapsed, 0.2f);
 	}
 	else
 	{

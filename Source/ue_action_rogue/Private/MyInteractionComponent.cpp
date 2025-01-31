@@ -51,8 +51,8 @@ void UMyInteractionComponent::PrimaryInteract()
 	TArray<FHitResult> Hits;
 	FCollisionShape MyShape;
 	MyShape.SetSphere(30.0f);
-	
-	bool bBlockingHit = GetWorld()->SweepMultiByObjectType(Hits, EyeLocation, End, FQuat::Identity, ObjectQueryParams, MyShape);
+
+	const bool bBlockingHit = GetWorld()->SweepMultiByObjectType(Hits, EyeLocation, End, FQuat::Identity, ObjectQueryParams, MyShape);
 	const FColor LineColor = bBlockingHit ? FColor::Green : FColor::Red;
 	for (FHitResult Hit : Hits)
 	{

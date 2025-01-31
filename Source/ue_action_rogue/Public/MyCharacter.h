@@ -20,8 +20,11 @@ public:
 	AMyCharacter();
 
 protected:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category="Attack")
 	TSubclassOf<AActor> ProjectileClass;
+
+	UPROPERTY(EditAnywhere, Category="Attack")
+	UAnimMontage* AttackAnim;
 	
 	UPROPERTY(VisibleAnywhere)
 	USpringArmComponent* SpringArmComp;
@@ -31,6 +34,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere)
 	UMyInteractionComponent* InteractionComp;
+
+	FTimerHandle PrimaryAttack_TimerHandle;
+	void PrimaryAttack_Time_Elapsed();
 	
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
