@@ -45,17 +45,32 @@ void UMyInteractionComponent::PrimaryInteract()
 	MyOwner->GetActorEyesViewPoint(EyeLocation, EyeRotation);
 
 	const FVector End = EyeLocation + (EyeRotation.Vector()*1000);
-	FHitResult Hit;
-	GetWorld()->LineTraceSingleByObjectType(Hit, EyeLocation, End, ObjectQueryParams);
+	// FHitResult Hit;
+	// GetWorld()->LineTraceSingleByObjectType(Hit, EyeLocation, End, ObjectQueryParams);
 
-	if (AActor* HitActor = Hit.GetActor())
+	TArray<FHitResult> Hits;
+	FCollisionShape MyShape;
+	MyShape.SetSphere(30.0f);
+	
+	bool bBlockingHit = GetWorld()->SweepMultiByObjectType(Hits, EyeLocation, End, FQuat::Identity, ObjectQueryParams, MyShape);
+	const FColor LineColor = bBlockingHit ? FColor::Green : FColor::Red;
+	for (FHitResult Hit : Hits)
 	{
-		// e.g. MyItemChest implements IMyGameplayInterface
-		if (HitActor->Implements<UMyGameplayInterface>())
+		if (AActor* HitActor = Hit.GetActor())
 		{
-			APawn* MyPawn = Cast<APawn>(MyOwner);
-			IMyGameplayInterface::Execute_Interact(HitActor, MyPawn);
+			// e.g. MyItemChest implements IMyGameplayInterface
+			if (HitActor->Implements<UMyGameplayInterface>())
+			{
+				APawn* MyPawn = Cast<APawn>(MyOwner);
+				IMyGameplayInterface::Execute_Interact(HitActor, MyPawn);
+				break;
+			}
 		}
+
+		// for every hit we draw Sphere
+		DrawDebugSphere(GetWorld(), Hit.ImpactPoint, 30.0f, 16, LineColor, false, 2.0f);
 	}
+	
+	DrawDebugLine(GetWorld(), EyeLocation, End, LineColor, false, 2.0f, 0, 2.0f);
 }
 

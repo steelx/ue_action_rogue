@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Source/ue_action_rogue/Private/MyCharacter.cpp
 
 
 #include "MyCharacter.h"
@@ -20,8 +20,9 @@ AMyCharacter::AMyCharacter()
 	
 	CameraComp = CreateDefaultSubobject<UCameraComponent>("Camera Component");
 	CameraComp->SetupAttachment(SpringArmComp);
-	// RPG like camera, character won't rotation only camera does if set to false
+	// make the character face the direction of the movement
 	GetCharacterMovement()->bOrientRotationToMovement = true;
+	// prevent the character from rotating with the camera.
 	bUseControllerRotationYaw = false;
 
 	InteractionComp = CreateDefaultSubobject<UMyInteractionComponent>("Interaction Component");
