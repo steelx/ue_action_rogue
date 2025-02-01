@@ -24,6 +24,6 @@ class UE_ACTION_ROGUE_API IMyGameplayInterface
 public:
 
 	/// while adding use name Interact_Implementation
-	UFUNCTION(BlueprintNativeEvent)
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void Interact(APawn* InstigatorPawn);
 };
