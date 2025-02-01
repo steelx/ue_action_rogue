@@ -32,5 +32,5 @@ void AMyItemChest::Tick(float DeltaTime)
 
 void AMyItemChest::Interact_Implementation(APawn* InstigatorPawn)
 {
-	LidMesh->SetRelativeRotation(FRotator(70, 0, 0));
+	LidMesh->SetRelativeRotation(FRotator(90, 0, 0));
 }
