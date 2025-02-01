@@ -4,7 +4,9 @@
 #include "MyCharacter.h"
 
 #include "MyInteractionComponent.h"
+#include "MyMagicProjectile.h"
 #include "Camera/CameraComponent.h"
+#include "Components/SphereComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
@@ -99,7 +101,7 @@ void AMyCharacter::PrimaryAttack_Time_Elapsed()
 		UE_LOG(LogTemp, Warning, TEXT("AttackAnim is not set in %s"), *GetNameSafe(this));
 	}
 		
-	const FVector SpawnLocation = GetMesh()->GetSocketLocation("Muzzle_01");
+	const FVector SpawnLocation = GetMesh()->GetSocketLocation("Muzzle_01") + GetActorForwardVector()*100.0f;
 	const FTransform SpawnTransform(GetControlRotation(), SpawnLocation);
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
